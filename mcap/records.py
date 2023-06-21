@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
 import zlib
 
@@ -6,19 +5,19 @@ from .data_stream import RecordBuilder
 from .opcode import Opcode
 
 
-@dataclass
 class McapRecord:
     def write(self, stream: RecordBuilder) -> None:
         raise NotImplementedError()
 
 
-@dataclass
 class Attachment(McapRecord):
-    create_time: int
-    log_time: int
-    name: str
-    media_type: str
-    data: bytes
+    def __init__(self, create_time: int, log_time: int, name: str,
+                 media_type: str, data: bytes):
+        self.create_time = create_time
+        self.log_time = log_time
+        self.name = name
+        self.media_type = media_type
+        self.data = data
 
     def write(self, stream: RecordBuilder):
         builder = RecordBuilder()
@@ -36,15 +35,16 @@ class Attachment(McapRecord):
         stream.write4(zlib.crc32(data[9:-4]))
 
 
-@dataclass
 class AttachmentIndex(McapRecord):
-    offset: int
-    length: int
-    log_time: int
-    create_time: int
-    data_size: int
-    name: str
-    media_type: str
+    def __init__(self, offset: int, length: int, log_time: int,
+                 create_time: int, data_size: int, name: str, media_type: str):
+        self.offset = offset
+        self.length = length
+        self.log_time = log_time
+        self.create_time = create_time
+        self.data_size = data_size
+        self.name = name
+        self.media_type = media_type
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.ATTACHMENT_INDEX)
@@ -58,13 +58,14 @@ class AttachmentIndex(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Channel(McapRecord):
-    id: int
-    topic: str
-    message_encoding: str
-    metadata: Dict[str, str]
-    schema_id: int
+    def __init__(self, id: int, topic: str, message_encoding: str,
+                 metadata: Dict[str, str], schema_id: int):
+        self.id = id
+        self.topic = topic
+        self.message_encoding = message_encoding
+        self.metadata = metadata
+        self.schema_id = schema_id
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.CHANNEL)
@@ -84,14 +85,16 @@ class Channel(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Chunk(McapRecord):
-    compression: str
-    data: bytes = field(repr=False)
-    message_end_time: int
-    message_start_time: int
-    uncompressed_crc: int
-    uncompressed_size: int
+    def __init__(self, compression: str, data: bytes, message_end_time: int,
+                message_start_time: int, uncompressed_crc: int,
+                uncompressed_size: int):
+        self.compression = compression
+        self.data = data
+        self.message_end_time = message_end_time
+        self.message_start_time = message_start_time
+        self.uncompressed_crc = uncompressed_crc
+        self.uncompressed_size = uncompressed_size
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.CHUNK)
@@ -105,17 +108,21 @@ class Chunk(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class ChunkIndex(McapRecord):
-    chunk_length: int
-    chunk_start_offset: int
-    compression: str
-    compressed_size: int
-    message_end_time: int
-    message_index_length: int
-    message_index_offsets: Dict[int, int]
-    message_start_time: int
-    uncompressed_size: int
+    def __init__(self, chunk_length: int, chunk_start_offset: int,
+                 compression: str, compressed_size: int,
+                 message_end_time: int, message_index_length: int,
+                 message_index_offsets: Dict[int, int],
+                 message_start_time: int, uncompressed_size: int):
+        self.chunk_length = chunk_length
+        self.chunk_start_offset = chunk_start_offset
+        self.compression = compression
+        self.compressed_size = compressed_size
+        self.message_end_time = message_end_time
+        self.message_index_length = message_index_length
+        self.message_index_offsets = message_index_offsets
+        self.message_start_time = message_start_time
+        self.uncompressed_size = uncompressed_size
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.CHUNK_INDEX)
@@ -134,9 +141,9 @@ class ChunkIndex(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class DataEnd(McapRecord):
-    data_section_crc: int
+    def __init__(self, data_section_crc: int):
+        self.data_section_crc = data_section_crc
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.DATA_END)
@@ -144,11 +151,12 @@ class DataEnd(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Footer(McapRecord):
-    summary_start: int
-    summary_offset_start: int
-    summary_crc: int
+    def __init__(self, summary_start: int, summary_offset_start: int,
+                 summary_crc: int):
+        self.summary_start = summary_start
+        self.summary_offset_start = summary_offset_start
+        self.summary_crc = summary_crc
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.FOOTER)
@@ -158,10 +166,10 @@ class Footer(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Header(McapRecord):
-    profile: str
-    library: str
+    def __init__(self, profile: str, library: str):
+        self.profile = profile
+        self.library = library
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.HEADER)
@@ -170,13 +178,14 @@ class Header(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Message(McapRecord):
-    channel_id: int
-    log_time: int
-    data: bytes
-    publish_time: int
-    sequence: int
+    def __init__(self, channel_id: int, log_time: int, data: bytes,
+                 publish_time: int, sequence: int):
+        self.channel_id = channel_id
+        self.log_time = log_time
+        self.data = data
+        self.publish_time = publish_time
+        self.sequence = sequence
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.MESSAGE)
@@ -188,10 +197,10 @@ class Message(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class MessageIndex(McapRecord):
-    channel_id: int
-    records: List[Tuple[int, int]]
+    def __init__(self, channel_id: int, records: List[Tuple[int, int]]):
+        self.channel_id = channel_id
+        self.records = records
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.MESSAGE_INDEX)
@@ -203,10 +212,10 @@ class MessageIndex(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Metadata(McapRecord):
-    name: str
-    metadata: Dict[str, str]
+    def __init__(self, name: str, metadata: Dict[str, str]):
+        self.name = name
+        self.metadata = metadata
 
     def write(self, stream: RecordBuilder) -> None:
         stream.start_record(Opcode.METADATA)
@@ -223,11 +232,11 @@ class Metadata(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class MetadataIndex(McapRecord):
-    offset: int
-    length: int
-    name: str
+    def __init__(self, offset: int, length: int, name: str):
+        self.offset = offset
+        self.length = length
+        self.name = name
 
     def write(self, stream: RecordBuilder) -> None:
         stream.start_record(Opcode.METADATA_INDEX)
@@ -237,12 +246,12 @@ class MetadataIndex(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Schema(McapRecord):
-    id: int
-    data: bytes
-    encoding: str
-    name: str
+    def __init__(self, id: int, data: bytes, encoding: str, name: str):
+        self.id = id
+        self.data = data
+        self.encoding = encoding
+        self.name = name
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.SCHEMA)
@@ -254,17 +263,21 @@ class Schema(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class Statistics(McapRecord):
-    attachment_count: int
-    channel_count: int
-    channel_message_counts: Dict[int, int]
-    chunk_count: int
-    message_count: int
-    message_end_time: int
-    message_start_time: int
-    metadata_count: int
-    schema_count: int
+    def __init__(self, attachment_count: int, channel_count: int,
+                 channel_message_counts: Dict[int, int], chunk_count: int,
+                 message_count: int, message_end_time: int,
+                 message_start_time: int, metadata_count: int,
+                 schema_count: int):
+        self.attachment_count = attachment_count
+        self.channel_count = channel_count
+        self.channel_message_counts = channel_message_counts
+        self.chunk_count = chunk_count
+        self.message_count = message_count
+        self.message_end_time = message_end_time
+        self.message_start_time = message_start_time
+        self.metadata_count = metadata_count
+        self.schema_count = schema_count
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.STATISTICS)
@@ -283,11 +296,11 @@ class Statistics(McapRecord):
         stream.finish_record()
 
 
-@dataclass
 class SummaryOffset(McapRecord):
-    group_opcode: int
-    group_start: int
-    group_length: int
+    def __init__(self, group_opcode: int, group_start: int, group_length: int):
+        self.group_opcode = group_opcode
+        self.group_start = group_start
+        self.group_length = group_length
 
     def write(self, stream: RecordBuilder):
         stream.start_record(Opcode.SUMMARY_OFFSET)
