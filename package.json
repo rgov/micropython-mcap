@@ -1,0 +1,15 @@
+{
+    "urls": [
+        ["mcap/__init__.py", "github:rgov/micropython-mcap/mcap/__init__.py"],
+        ["mcap/_chunk_builder.py", "github:rgov/micropython-mcap/mcap/_chunk_builder.py"],
+        ["mcap/_typing.py", "github:rgov/micropython-mcap/mcap/_typing.py"],
+        ["mcap/crc32.py", "github:rgov/micropython-mcap/mcap/crc32.py"],
+        ["mcap/data_stream.py", "github:rgov/micropython-mcap/mcap/data_stream.py"],
+        ["mcap/exceptions.py", "github:rgov/micropython-mcap/mcap/exceptions.py"],
+        ["mcap/opcode.py", "github:rgov/micropython-mcap/mcap/opcode.py"],
+        ["mcap/records.py", "github:rgov/micropython-mcap/mcap/records.py"],
+        ["mcap/well_known.py", "github:rgov/micropython-mcap/mcap/well_known.py"],
+        ["mcap/writer.py", "github:rgov/micropython-mcap/mcap/writer.py"]
+    ],
+    "version": "1.1.0"
+}
