@@ -1,8 +1,8 @@
 from io import BytesIO
-from typing import Dict
 
 from .data_stream import RecordBuilder
 from .records import Channel, Message, MessageIndex, Schema
+from ._typing import Dict
 
 
 class ChunkBuilder:

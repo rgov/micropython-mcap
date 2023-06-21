@@ -1,6 +1,5 @@
 import struct
 from collections import OrderedDict
-from typing import IO, Any, Dict, List, Union
 
 from ._chunk_builder import ChunkBuilder
 from .crc32 import crc32
@@ -22,6 +21,7 @@ from .records import (
     Statistics,
     SummaryOffset,
 )
+from ._typing import IO, Any, Dict, List, Union
 from mcap import __version__
 
 MCAP0_MAGIC = b'\x89MCAP0\r\n'

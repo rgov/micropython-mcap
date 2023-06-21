@@ -1,8 +1,7 @@
-from typing import Dict, List, Tuple
-
 from .crc32 import crc32
 from .data_stream import RecordBuilder
 from .opcode import Opcode
+from ._typing import Dict, List, Tuple
 
 
 class McapRecord:
