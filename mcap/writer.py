@@ -29,7 +29,7 @@ from .records import (
 )
 from mcap import __version__
 
-MCAP0_MAGIC = struct.pack("<8B", 137, 77, 67, 65, 80, 48, 13, 10)
+MCAP0_MAGIC = b'\x89MCAP0\r\n'
 LIBRARY_IDENTIFIER = f"python mcap {__version__}"
 
 
