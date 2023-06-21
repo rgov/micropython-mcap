@@ -1,9 +1,9 @@
 import struct
-import zlib
 from collections import OrderedDict
 from typing import IO, Any, Dict, List, Union
 
 from ._chunk_builder import ChunkBuilder
+from .crc32 import crc32
 from .data_stream import RecordBuilder
 from .opcode import Opcode
 from .records import (
@@ -305,8 +305,8 @@ class Writer:
 
         summary_crc = 0
         if self.__enable_crcs:
-            summary_crc = zlib.crc32(summary_data)
-            summary_crc = zlib.crc32(
+            summary_crc = crc32(summary_data)
+            summary_crc = crc32(
                 struct.pack(
                     "<BQQQ",  # cspell:disable-line
                     Opcode.FOOTER,
@@ -396,14 +396,14 @@ class Writer:
         """
         self.__stream.write(MCAP0_MAGIC)
         if self.__enable_data_crcs:
-            self.__data_section_crc = zlib.crc32(MCAP0_MAGIC, self.__data_section_crc)
+            self.__data_section_crc = crc32(MCAP0_MAGIC, self.__data_section_crc)
         Header(profile, library).write(self.__record_builder)
         self.__flush()
 
     def __flush(self):
         data = self.__record_builder.end()
         if self.__enable_data_crcs:
-            self.__data_section_crc = zlib.crc32(data, self.__data_section_crc)
+            self.__data_section_crc = crc32(data, self.__data_section_crc)
         self.__stream.write(data)
 
     def __finalize_chunk(self):
@@ -423,7 +423,7 @@ class Writer:
             data=compressed_data,
             message_start_time=self.__chunk_builder.message_start_time,
             message_end_time=self.__chunk_builder.message_end_time,
-            uncompressed_crc=zlib.crc32(chunk_data) if self.__enable_crcs else 0,
+            uncompressed_crc=crc32(chunk_data) if self.__enable_crcs else 0,
             uncompressed_size=len(chunk_data),
         )
 

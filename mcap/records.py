@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple
-import zlib
 
+from .crc32 import crc32
 from .data_stream import RecordBuilder
 from .opcode import Opcode
 
@@ -32,7 +32,7 @@ class Attachment(McapRecord):
         builder.finish_record()
         data = memoryview(builder.end())
         stream.write(data[:-4])
-        stream.write4(zlib.crc32(data[9:-4]))
+        stream.write4(crc32(data[9:-4]))
 
 
 class AttachmentIndex(McapRecord):
