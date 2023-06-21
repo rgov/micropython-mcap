@@ -1,7 +1,6 @@
 import struct
 import zlib
 from collections import defaultdict
-from io import BufferedWriter, RawIOBase
 from typing import IO, Any, Dict, List, OrderedDict, Union
 
 from ._chunk_builder import ChunkBuilder
@@ -61,7 +60,7 @@ class Writer:
 
     def __init__(
         self,
-        output: Union[str, IO[Any], BufferedWriter],
+        output: Union[str, IO[Any]],
         chunk_size: int = 1024 * 1024,
         compression: int = CompressionType.NONE,
         index_types: int = IndexType.ALL,
@@ -77,8 +76,6 @@ class Writer:
         if isinstance(output, str):
             self.__stream = open(output, "wb")
             self.__should_close = True
-        elif isinstance(output, RawIOBase):
-            self.__stream = BufferedWriter(output)
         else:
             self.__stream = output
         self.__record_builder = RecordBuilder()
