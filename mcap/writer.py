@@ -1,7 +1,7 @@
 import struct
 import zlib
-from collections import defaultdict
-from typing import IO, Any, Dict, List, OrderedDict, Union
+from collections import defaultdict, OrderedDict
+from typing import IO, Any, Dict, List, Union
 
 from ._chunk_builder import ChunkBuilder
 from .data_stream import RecordBuilder
