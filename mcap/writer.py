@@ -5,9 +5,6 @@ from enum import Enum, Flag, auto
 from io import BufferedWriter, RawIOBase
 from typing import IO, Any, Dict, List, OrderedDict, Union
 
-import lz4.frame  # type: ignore
-import zstandard
-
 from ._chunk_builder import ChunkBuilder
 from .data_stream import RecordBuilder
 from .opcode import Opcode
@@ -35,8 +32,6 @@ LIBRARY_IDENTIFIER = f"python mcap {__version__}"
 
 class CompressionType(Enum):
     NONE = auto()
-    LZ4 = auto()
-    ZSTD = auto()
 
 
 class IndexType(Flag):
@@ -69,7 +64,7 @@ class Writer:
         self,
         output: Union[str, IO[Any], BufferedWriter],
         chunk_size: int = 1024 * 1024,
-        compression: CompressionType = CompressionType.ZSTD,
+        compression: CompressionType = CompressionType.NONE,
         index_types: IndexType = IndexType.ALL,
         repeat_channels: bool = True,
         repeat_schemas: bool = True,
@@ -424,15 +419,8 @@ class Writer:
         self.__statistics.chunk_count += 1
 
         chunk_data = self.__chunk_builder.end()
-        if self.__compression == CompressionType.LZ4:
-            compression = "lz4"
-            compressed_data: bytes = lz4.frame.compress(chunk_data)  # type: ignore
-        elif self.__compression == CompressionType.ZSTD:
-            compression = "zstd"
-            compressed_data: bytes = zstandard.compress(chunk_data)  # type: ignore
-        else:
-            compression = ""
-            compressed_data = chunk_data
+        compression = ""
+        compressed_data = chunk_data
         chunk = Chunk(
             compression=compression,
             data=compressed_data,
