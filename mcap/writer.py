@@ -1,6 +1,6 @@
 import struct
 import zlib
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 from typing import IO, Any, Dict, List, Union
 
 from ._chunk_builder import ChunkBuilder
@@ -93,7 +93,7 @@ class Writer:
         self.__statistics = Statistics(
             attachment_count=0,
             channel_count=0,
-            channel_message_counts=defaultdict(int),
+            channel_message_counts={},
             chunk_count=0,
             message_count=0,
             metadata_count=0,
@@ -180,7 +180,8 @@ class Writer:
         self.__statistics.message_end_time = max(
             log_time, self.__statistics.message_end_time
         )
-        self.__statistics.channel_message_counts[message.channel_id] += 1
+        self.__statistics.channel_message_counts[message.channel_id] = 1 + \
+            self.__statistics.channel_message_counts.get(message.channel_id, 0)
         self.__statistics.message_count += 1
         if self.__chunk_builder:
             self.__chunk_builder.add_message(message)
