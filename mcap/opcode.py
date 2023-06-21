@@ -1,8 +1,4 @@
-from enum import IntEnum, unique
-
-
-@unique
-class Opcode(IntEnum):
+class Opcode:
     ATTACHMENT = 0x09
     ATTACHMENT_INDEX = 0x0A
     CHANNEL = 0x04

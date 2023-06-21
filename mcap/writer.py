@@ -1,7 +1,6 @@
 import struct
 import zlib
 from collections import defaultdict
-from enum import Enum, Flag, auto
 from io import BufferedWriter, RawIOBase
 from typing import IO, Any, Dict, List, OrderedDict, Union
 
@@ -30,18 +29,18 @@ MCAP0_MAGIC = b'\x89MCAP0\r\n'
 LIBRARY_IDENTIFIER = f"python mcap {__version__}"
 
 
-class CompressionType(Enum):
-    NONE = auto()
+class CompressionType:
+    NONE = 0
 
 
-class IndexType(Flag):
+class IndexType:
     """Determines what indexes should be written to the MCAP file. If in doubt, choose ALL."""
 
-    NONE = auto()
-    ATTACHMENT = auto()
-    CHUNK = auto()
-    MESSAGE = auto()
-    METADATA = auto()
+    NONE = 0
+    ATTACHMENT = 1 << 0
+    CHUNK = 1 << 1
+    MESSAGE = 1 << 2
+    METADATA = 1 << 3
     ALL = ATTACHMENT | CHUNK | MESSAGE | METADATA
 
 
@@ -64,8 +63,8 @@ class Writer:
         self,
         output: Union[str, IO[Any], BufferedWriter],
         chunk_size: int = 1024 * 1024,
-        compression: CompressionType = CompressionType.NONE,
-        index_types: IndexType = IndexType.ALL,
+        compression: int = CompressionType.NONE,
+        index_types: int = IndexType.ALL,
         repeat_channels: bool = True,
         repeat_schemas: bool = True,
         use_chunking: bool = True,
